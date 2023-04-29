@@ -19,11 +19,13 @@ def getURL(filename):
 
 class SpaceInvaders():
 
-    NO_INVADERS = 5 # Nombre d'aliens  
+    NO_INVADERS = 1 # Nombre d'aliens  
     
     def __init__(self, display : bool = False):
+        self.Xprec=0 
+
         # facteur de réduction de la taille du plateau (20 => plate de 800/20 par 600/20 = 40 par 30)
-        self.reducing_factor = 20
+        self.reducing_factor = 10
 
         # player
         self.display = display
@@ -85,17 +87,38 @@ class SpaceInvaders():
         return pygame.surfarray.array3d(self.screen)
 
     def get_state(self):
-
-        if self.invader_Y[0] >= 2000:
+        ''' OLD STATTE
+        if self.invader_Y[0] > 600:
             inv_Y = 25
         else:
-            inv_Y = round(self.invader_Y[0] / 20)
+            inv_Y = round(self.invader_Y[0] / self.reducing_factor)
 
         state = (
-            round(self.player_X / 20),
-            round(self.invader_X[0] / 20),
+            round(self.player_X / self.reducing_factor),
+            round(self.invader_X[0] / self.reducing_factor),
             inv_Y
-        )
+        )'''
+
+        if self.invader_Y[0] > 600:
+            inv_Y = 600 # cas de la collison, la postion Y devient 2000 jsp pq ils ont fait ça
+        else:
+            inv_Y = self.invader_Y[0]
+
+        vectorX = self.get_indavers_X()[0] - self.get_player_X() + 800
+        vectorY = inv_Y - self.get_player_Y() +600
+        direction = np.sign(self.get_indavers_X()[0] - self.Xprec) + 800
+        etat = self.get_bullet_state()
+
+        e=0
+        if etat == 'rest' :
+            e=1
+        else:
+            e=0
+        
+        state = (int(vectorX/20), int(vectorY/20), int(direction/20), e)
+
+        self.Xprec = self.get_indavers_X()[0]
+        
         return state
 
     def reset(self):

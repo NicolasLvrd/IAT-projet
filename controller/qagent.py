@@ -5,7 +5,8 @@ class QAgent():
 
     def __init__(self, game, eps_profile: EpsilonProfile, gamma: float, alpha: float):
         # Initialise la fonction de valeur Q
-        self.Q = np.zeros([ round(800/game.reducing_factor + 1), round(800/game.reducing_factor + 1), round(600/game.reducing_factor + 1), game.na])
+        #self.Q = np.zeros([ round(800/game.reducing_factor + 1), round(800/game.reducing_factor + 1), round(600/game.reducing_factor + 1), game.na])
+        self.Q = np.zeros([ 81, 61, 81, 2, game.na])
 
         self.maze = game
         self.na = game.na
@@ -39,11 +40,14 @@ class QAgent():
                     break
 
                 state = next_state
+
             # Mets à jour la valeur du epsilon
             self.epsilon = max(self.epsilon - self.eps_profile.dec_episode / (n_episodes - 1.), self.eps_profile.final)
 
             # Sauvegarde es données d'apprentissage
-            print("\r#> Ep. {}/{} | Value={} | score={}".format(episode, n_episodes, self.Q[state][self.select_greedy_action(state)], env.get_score()), end =" ")
+            score = env.get_score()
+            state = env.reset()
+            print("\r#> Ep. {}/{} | Value={} | score={}".format(episode, n_episodes, self.Q[state][self.select_greedy_action(state)], score), end =" ")
             np.save(f"res/qvalues_epi={n_episodes}_steps={max_steps}_gamma={self.gamma}_alpha={self.alpha}.npy", self.Q)
 
     def updateQ(self, state, action, reward, next_state):
