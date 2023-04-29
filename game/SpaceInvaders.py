@@ -19,9 +19,12 @@ def getURL(filename):
 
 class SpaceInvaders():
 
-    NO_INVADERS = 1 # Nombre d'aliens  
+    NO_INVADERS = 5 # Nombre d'aliens  
     
     def __init__(self, display : bool = False):
+        # facteur de réduction de la taille du plateau (20 => plate de 800/20 par 600/20 = 40 par 30)
+        self.reducing_factor = 20
+
         # player
         self.display = display
         
@@ -82,11 +85,18 @@ class SpaceInvaders():
         return pygame.surfarray.array3d(self.screen)
 
     def get_state(self):
-        """ A COMPLETER AVEC VOTRE ETAT
-        Cette méthode doit renvoyer l'état du système comme vous aurez choisi de
-        le représenter. Vous pouvez utiliser les accesseurs ci-dessus pour cela. 
-        """
-        return "L'état n'est pas implémenté (SpaceInvaders.get_state)"
+
+        if self.invader_Y[0] >= 2000:
+            inv_Y = 25
+        else:
+            inv_Y = round(self.invader_Y[0] / 20)
+
+        state = (
+            round(self.player_X / 20),
+            round(self.invader_X[0] / 20),
+            inv_Y
+        )
+        return state
 
     def reset(self):
         """Reset the game at the initial state.
@@ -167,8 +177,9 @@ class SpaceInvaders():
             if self.invader_Y[i] >= 450:
                 if abs(self.player_X-self.invader_X[i]) < 80:
                     for j in range(SpaceInvaders.NO_INVADERS):
-                        self.invader_Y[j] = 2000
+                        self.invader_Y[j] = 2000 # 2000 ?? c'est hors de l'écran...
                     is_done = True
+                    print("GAME OVER")
                     break
                 
             if self.invader_X[i] >= 735 or self.invader_X[i] <= 0:
@@ -184,6 +195,8 @@ class SpaceInvaders():
                 self.invader_X[i] = random.randint(64, 736)
                 self.invader_Y[i] = random.randint(30, 200)
                 self.invader_Xchange[i] *= -1
+            #if self.bullet_Y < 30:
+            #    reward = -1
     
             self.move_invader(self.invader_X[i], self.invader_Y[i], i)
     
@@ -227,3 +240,6 @@ class SpaceInvaders():
     def isCollision(self, x1, x2, y1, y2):
         distance = math.sqrt((math.pow(x1 - x2,2)) + (math.pow(y1 - y2,2)))
         return (distance <= 50)
+
+    def get_score(self):
+        return self.score_val
