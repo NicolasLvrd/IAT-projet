@@ -8,11 +8,11 @@ from epsilon_profile import EpsilonProfile
 def main():
 
     game = SpaceInvaders(display=True)
-    eps_profile = EpsilonProfile(1., 0.1, 1, 0)
+    eps_profile = EpsilonProfile(0.7, 0.05, 1, 0)
     #controller = KeyboardController()
     #controller = RandomAgent(game.na)
-    controller = QAgent(game, eps_profile, 1, 0.75)
-    controller.learn(game, 500, 50000)
+    controller = QAgent(game, eps_profile, 0.3, 0.75)
+    controller.learn(game, 50, 20000)
 
     '''
     state = game.reset()

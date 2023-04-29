@@ -24,6 +24,8 @@ class SpaceInvaders():
     def __init__(self, display : bool = False):
         self.Xprec=0 
 
+        self.reducer = 80
+
         # facteur de réduction de la taille du plateau (20 => plate de 800/20 par 600/20 = 40 par 30)
         self.reducing_factor = 10
 
@@ -87,7 +89,7 @@ class SpaceInvaders():
         return pygame.surfarray.array3d(self.screen)
 
     def get_state(self):
-        ''' OLD STATTE
+        ''' STATE V1
         if self.invader_Y[0] > 600:
             inv_Y = 25
         else:
@@ -99,6 +101,7 @@ class SpaceInvaders():
             inv_Y
         )'''
 
+        ''' STATE V2
         if self.invader_Y[0] > 600:
             inv_Y = 600 # cas de la collison, la postion Y devient 2000 jsp pq ils ont fait ça
         else:
@@ -118,6 +121,39 @@ class SpaceInvaders():
         state = (int(vectorX/20), int(vectorY/20), int(direction/20), e)
 
         self.Xprec = self.get_indavers_X()[0]
+        '''
+
+        ''' STATE V3 '''
+        
+
+        if self.invader_Y[0] > self.screen_height:
+            self.invader_Y[0] = self.screen_height
+
+        if self.bullet_state == 'rest':
+            bullet_state = 0
+        else:
+            bullet_state = 1
+
+        state = (
+            int(self.invader_X[0] / self.reducer), # entre 0 et 80
+            int(self.invader_Y[0] / self.reducer), # entre 0 et 60
+            int(self.player_X / self.reducer), # entre 0 et 40
+            int(self.bullet_Y / self.reducer), # entre 0 et 30
+            bullet_state # 0 ou 1
+        )
+
+        '''
+        rel_inv_X = self.get_indavers_X()[0] - self.get_player_X() + 800
+        rel_inv_Y = inv_Y - self.get_player_Y() + 600
+        
+        state = (
+            int(rel_inv_X / reducer), # entre 0 et 80
+            int(rel_inv_Y / reducer), # entre 0 et 60
+            int(self.get_bullet_X() / reducer), # entre 0 et 40
+            int(self.get_bullet_Y() / reducer), # entre 0 et 30
+            bullet_state # 0 ou 1
+        )
+        '''
         
         return state
 
@@ -202,7 +238,7 @@ class SpaceInvaders():
                     for j in range(SpaceInvaders.NO_INVADERS):
                         self.invader_Y[j] = 2000 # 2000 ?? c'est hors de l'écran...
                     is_done = True
-                    print("GAME OVER")
+                    #print("GAME OVER")
                     break
                 
             if self.invader_X[i] >= 735 or self.invader_X[i] <= 0:
