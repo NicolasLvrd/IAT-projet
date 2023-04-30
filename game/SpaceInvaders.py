@@ -22,10 +22,8 @@ class SpaceInvaders():
     NO_INVADERS = 1 # Nombre d'aliens  
     
     def __init__(self, display : bool = False):
+        
         self.Xprec=0 
-
-        # facteur de réduction de la taille du plateau (20 => plate de 800/20 par 600/20 = 40 par 30)
-        self.reducing_factor = 10
 
         # player
         self.display = display
@@ -87,17 +85,6 @@ class SpaceInvaders():
         return pygame.surfarray.array3d(self.screen)
 
     def get_state(self):
-        ''' OLD STATTE
-        if self.invader_Y[0] > 600:
-            inv_Y = 25
-        else:
-            inv_Y = round(self.invader_Y[0] / self.reducing_factor)
-
-        state = (
-            round(self.player_X / self.reducing_factor),
-            round(self.invader_X[0] / self.reducing_factor),
-            inv_Y
-        )'''
 
         if self.invader_Y[0] > 600:
             inv_Y = 600 # cas de la collison, la postion Y devient 2000 jsp pq ils ont fait ça
@@ -105,17 +92,16 @@ class SpaceInvaders():
             inv_Y = self.invader_Y[0]
 
         vectorX = self.get_indavers_X()[0] - self.get_player_X() + 800
-        vectorY = inv_Y - self.get_player_Y() +600
-        direction = np.sign(self.get_indavers_X()[0] - self.Xprec) + 800
+        # vectorY = inv_Y - self.get_player_Y() +600
+        direction = np.sign(self.get_indavers_X()[0] - self.Xprec) + 1
         etat = self.get_bullet_state()
 
-        e=0
         if etat == 'rest' :
             e=1
         else:
             e=0
         
-        state = (int(vectorX/20), int(vectorY/20), int(direction/20), e)
+        state = (int(vectorX/40), int(inv_Y/50), int(direction/20), e)
 
         self.Xprec = self.get_indavers_X()[0]
         
@@ -202,7 +188,6 @@ class SpaceInvaders():
                     for j in range(SpaceInvaders.NO_INVADERS):
                         self.invader_Y[j] = 2000 # 2000 ?? c'est hors de l'écran...
                     is_done = True
-                    print("GAME OVER")
                     break
                 
             if self.invader_X[i] >= 735 or self.invader_X[i] <= 0:

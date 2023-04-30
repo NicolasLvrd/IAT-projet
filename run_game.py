@@ -4,18 +4,28 @@ from controller.keyboard import KeyboardController
 from controller.random_agent import RandomAgent
 from controller.qagent import QAgent
 from epsilon_profile import EpsilonProfile
+import numpy as np
 
 def main():
 
     game = SpaceInvaders(display=True)
-    eps_profile = EpsilonProfile(1., 0.1, 1, 0)
-    #controller = KeyboardController()
-    #controller = RandomAgent(game.na)
+    eps_profile = EpsilonProfile(0.3, 0., 1, 0)
+    # controller = KeyboardController()
+    # controller = RandomAgent(game.na)
     controller = QAgent(game, eps_profile, 1, 0.75)
-    controller.learn(game, 500, 50000)
 
+    #> ENTRAINEMENT
+
+    controller.learn(game, 50, 15000)
+
+
+    #> INFERENCE
     '''
+    # Charge les Q-values
+    controller.Q = np.load("res/qvalues_epi=2_steps=15000_gamma=1_alpha=0.75.npy")
+
     state = game.reset()
+    game.display = True
     while True:
         action = controller.select_action(state)
         state, reward, is_done = game.step(action)
