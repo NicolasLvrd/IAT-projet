@@ -101,7 +101,7 @@ class SpaceInvaders():
         else:
             e=0
         
-        state = (int(vectorX/40), int(inv_Y/50), int(direction/20), e)
+        state = (int(vectorX/40), int(inv_Y/50), int(direction), e)
 
         self.Xprec = self.get_indavers_X()[0]
         
